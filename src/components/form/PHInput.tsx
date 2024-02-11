@@ -6,9 +6,10 @@ type TInputProps = {
   name: string;
   label?: string;
   disabled?: boolean;
+  placeholder?:  string
 };
 
-const PHInput = ({ type, name, label, disabled }: TInputProps) => {
+const PHInput = ({ type, name, label, disabled, placeholder }: TInputProps) => {
   return (
     <div style={{ marginBottom: '20px' }}>
       <Controller
@@ -19,6 +20,7 @@ const PHInput = ({ type, name, label, disabled }: TInputProps) => {
               {...field}
               type={type}
               id={name}
+              placeholder={placeholder}
               size="large"
               disabled={disabled}
             />

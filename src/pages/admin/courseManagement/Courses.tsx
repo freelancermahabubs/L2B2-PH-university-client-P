@@ -8,6 +8,8 @@ import PHForm from "../../../components/form/PHForm";
 import PHSelect from "../../../components/form/PHSelect";
 
 import {useGetAllFacultiesQuery} from "../../../redux/features/admin/userManagement.api";
+import { toast } from "sonner";
+import { TResponse } from "../../../types";
 
 const Courses = () => {
   // const [params, setParams] = useState<TQueryParam[] | undefined>(undefined);
@@ -72,15 +74,24 @@ const AddFacultyModal = ({facultyInfo}: any) => {
     label: item.fullName,
   }));
 
-  const handleSubmit = (data: any) => {
+  const handleSubmit = async (data: any) => {
+    const toastId = toast.loading("Assign...");
     const facultyData = {
       courseId: facultyInfo.key,
       data,
     };
 
-    console.log(facultyData);
+    try {
+      const res = (await addFaculties(facultyData)) as TResponse<any>;
 
-    addFaculties(facultyData);
+      if (res.error) {
+        toast.error(res.error.data.message, {id: toastId});
+      } else {
+        toast.success("Faculty Assign", {id: toastId});
+      }
+    } catch (err) {
+      toast.error("Something went wrong", {id: toastId});
+    }
   };
 
   const showModal = () => {

@@ -12,6 +12,7 @@ import PHSelect from "../form/PHSelect";
 import {zodResolver} from "@hookform/resolvers/zod";
 import PHInput from "../form/PHInput";
 import {academicDepartmentSchema} from "../../schemas/src/schemas/academicDepartment.schema";
+import { TResponse } from "../../types";
 const AcademicDepartmentModal = ({
   open,
   setOpen,
@@ -53,7 +54,7 @@ const AcademicDepartmentModal = ({
     } else {
       try {
         // Handle add mode
-        const res = await addAcademicDepartment(vlaues);
+        const res = (await addAcademicDepartment(vlaues)) as TResponse<any>;
 
         if ("data" in res) {
           message =

@@ -1,24 +1,32 @@
 import {
   Button,
+  Dropdown,
   Pagination,
   Space,
   Table,
   TableColumnsType,
   TableProps,
+  Tag,
 } from "antd";
 import {useState} from "react";
 import {TQueryParam, TStudent} from "../../../types";
-import {useGetAllStudentsQuery} from "../../../redux/features/admin/userManagement.api";
+import {
+  useChangeStutusStudentMutation,
+  useGetAllStudentsQuery,
+} from "../../../redux/features/admin/userManagement.api";
 import {Link} from "react-router-dom";
 
 export type TTableData = Pick<
   TStudent,
-  "fullName" | "id" | "email" | "contactNo"
+  "fullName" | "user" | "id" | "email" | "contactNo"
 >;
 
 const StudentData = () => {
+  const [userId, setUserId] = useState("");
   const [params, setParams] = useState<TQueryParam[]>([]);
   const [page, setPage] = useState(1);
+
+  const [changeStutusStudent] = useChangeStutusStudentMutation();
   const {
     data: studentData,
     isLoading,
@@ -31,12 +39,38 @@ const StudentData = () => {
 
   console.log({isLoading, isFetching});
 
+  const handleStatusUpdate = (data: any) => {
+    const updateData = {
+      id: userId,
+      data: {
+        status: data.key,
+      },
+    };
+
+    changeStutusStudent(updateData);
+  };
+
+  const items = [
+    {
+      label: "Blocked",
+      key: "blocked",
+    },
+    {
+      label: "In-progress",
+      key: "in-progress",
+    },
+  ];
+  const menuProps = {
+    items,
+    onClick: handleStatusUpdate,
+  };
   const metaData = studentData?.meta;
 
   const tableData = studentData?.data?.map(
-    ({_id, fullName, id, email, contactNo}) => ({
+    ({_id, fullName, id, email, contactNo, user}) => ({
       key: _id,
       fullName,
+      user,
       id,
       email,
       contactNo,
@@ -54,6 +88,22 @@ const StudentData = () => {
       title: "Roll No.",
       key: "id",
       dataIndex: "id",
+    },
+    {
+      title: "Status",
+      key: "status",
+      dataIndex: "status",
+      render: ( item: any) => {
+        let color;
+        if (item?.user?.status === "block") {
+          color = "red";
+        }
+        if (item?.user?.status === "in-progress") {
+          color = "green";
+        }
+        console.log(item);
+        return <Tag color={color}>{item}</Tag>;
+      },
     },
     {
       title: "Email",
@@ -75,8 +125,10 @@ const StudentData = () => {
             <Link to={`/admin/student-data/${item.key}`}>
               <Button>Details</Button>
             </Link>
-            <Button>Update</Button>
-            <Button>Block</Button>
+
+            <Dropdown menu={menuProps} trigger={["click"]}>
+              <Button onClick={() => setUserId(item?.key)}>Update</Button>
+            </Dropdown>
           </Space>
         );
       },

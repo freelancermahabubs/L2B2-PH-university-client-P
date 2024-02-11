@@ -58,9 +58,41 @@ const userManagementApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["users"],
+    }),
+    addFaculty: builder.mutation({
+      query: (data) => ({
+        url: "/users/create-faculty",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["faculty"],
+    }),
+    addAdmin: builder.mutation({
+      query: (data) => ({
+        url: "/users/create-admin",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["admin"],
+    }),
+
+    changeStutusStudent: builder.mutation({
+      query: (args) => ({
+        url: `/users/change-status/${args.id}`,
+        method: "POST",
+        body: args.data,
+      }),
+      invalidatesTags: ["users"],
     }),
   }),
 });
 
-export const {useAddStudentMutation, useGetAllStudentsQuery, useGetAllFacultiesQuery} =
-  userManagementApi;
+export const {
+  useAddStudentMutation,
+  useGetAllStudentsQuery,
+  useGetAllFacultiesQuery,
+  useAddFacultyMutation,
+  useAddAdminMutation,
+  useChangeStutusStudentMutation
+} = userManagementApi;

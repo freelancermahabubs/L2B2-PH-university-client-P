@@ -8,6 +8,7 @@ import {
   useAddAcademicFacultyMutation,
   useUpdateAcademicFacultyMutation,
 } from "../../redux/features/admin/academicManagement.api";
+import { TResponse } from "../../types";
 
 const AcademicFaculty = ({
   open,
@@ -39,8 +40,8 @@ const AcademicFaculty = ({
 
     let message = "";
     if (mode === "edit") {
-      const res = await updateAcademicFaculty({data, _id});
-   
+      const res = (await updateAcademicFaculty({data, _id})) as TResponse<any>;
+
       message = res?.data?.message;
     } else {
       try {
